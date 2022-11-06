@@ -2,8 +2,87 @@
 <html>
     <head>
         <title>Example</title>
+        <style>
+            button {
+                background: none;
+                color: inherit;
+                border: none;
+                padding: 0;
+                font: inherit;
+                cursor: pointer;
+                outline: inherit;
+            }
+            #face {
+              border-radius: 25px;       
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              padding: 20px; 
+              width: 200px;
+              height: 200px;  
+            }
+        </style>
     </head>
-    <body>
-        <p>This is an example of a simple HTML page with one paragraph.</p>
+    <body onload="animateDiceIfRolling()">
+        <button type="button" onclick="clickedDiceButton()">
+            <p id="face" style="background-color:#73AD21" dice-state="roll">
+            <img id="faceIcon" height="150" width="150" src="dice_faces/aries.png"/>
+            </p>
+        </button>
+        <p id="faceMessage">            
+        </p>
+        <script>
+            let currentFace = 0;
+            let diceFaces = [];
+            diceFaces.push(["#73AD21", "aries.png", "You got Aries!"]);
+            diceFaces.push(["#ca4417", "pluto.png", "You got Pluto!"]);
+            diceFaces.push(["#1785ca", "libra.png", "You got Libra!"]);
+
+            var faceElement = document.getElementById("face");
+            var faceMessageElement = document.getElementById("faceMessage");
+            var faceIconElement = document.getElementById("faceIcon");
+
+            function getCurrentFace() {
+                return diceFaces[currentFace];
+            }
+
+            function updateFaceIcon(chosenFace, faceElement, faceIconElement) {
+                faceElement.setAttribute("style", "background-color:" + chosenFace[0]);
+                faceIconElement.setAttribute("src", "dice_faces/" + chosenFace[1]);
+            }
+
+            function clickedDiceButton() {                                
+                var diceState = faceElement.getAttribute("dice-state");
+             
+                if (diceState == "roll") {
+                    var chosenFace = getCurrentFace();
+                    
+                    updateFaceIcon(chosenFace, faceElement, faceIconElement);
+                
+                    faceElement.setAttribute("dice-state", "stop");
+                    faceMessageElement.innerHTML = chosenFace[2];
+                }   
+                else {             
+                    faceElement.setAttribute("dice-state", "roll");
+                    faceMessageElement.innerHTML = "";
+                }                
+            }
+
+            function animateDiceIfRolling() {
+                setInterval(animateRollingDice
+                , 100);
+            }
+
+            function animateRollingDice() {
+                var diceState = faceElement.getAttribute("dice-state");
+                
+                if (diceState == "roll")
+                {
+                    currentFace = (currentFace + 1) % diceFaces.length;
+
+                    updateFaceIcon(getCurrentFace(), faceElement, faceIconElement);
+                }
+            }
+        </script>
     </body>
 </html>
